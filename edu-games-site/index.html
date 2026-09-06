@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fun Learning Games</title>
+    <link rel="stylesheet" href="assets/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>🎮 Fun Learning Games</h1>
+      <p>Pick a game and start learning! Stars are saved on this device.</p>
+    </header>
+
+    <main class="container">
+      <section class="filter-section" aria-label="Filter games">
+        <div class="filter-group">
+          <label>Subject</label>
+          <div class="filter-buttons">
+            <button
+              class="btn btn-outline btn-sm active"
+              data-filter-subject="all"
+            >
+              All
+            </button>
+            <button class="btn btn-outline btn-sm" data-filter-subject="math">
+              Math
+            </button>
+            <button
+              class="btn btn-outline btn-sm"
+              data-filter-subject="reading"
+            >
+              Reading
+            </button>
+            <button
+              class="btn btn-outline btn-sm"
+              data-filter-subject="science"
+            >
+              Science
+            </button>
+            <button class="btn btn-outline btn-sm" data-filter-subject="logic">
+              Logic
+            </button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label>Level</label>
+          <div class="filter-buttons">
+            <button
+              class="btn btn-outline btn-sm active"
+              data-filter-level="all"
+            >
+              All Levels
+            </button>
+            <button class="btn btn-outline btn-sm" data-filter-level="easy">
+              Easy
+            </button>
+            <button class="btn btn-outline btn-sm" data-filter-level="medium">
+              Medium
+            </button>
+            <button class="btn btn-outline btn-sm" data-filter-level="hard">
+              Hard
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div class="games-grid">
+        <!-- Word Match -->
+        <article class="card" data-subject="reading" data-level="easy">
+          <a class="card-link" href="games/word-match/index.html">
+            <div class="card-thumb reading">📖</div>
+            <div class="card-body" data-game-id="word-match">
+              <h3>Sight Word Match</h3>
+              <p>Flip cards and find matching sight words.</p>
+              <div class="card-meta">
+                <div class="card-tags">
+                  <span class="tag tag-reading">Reading</span>
+                  <span class="tag tag-easy">Easy</span>
+                </div>
+                <span class="hub-stars"></span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- Math Blaster -->
+        <article class="card" data-subject="math" data-level="medium">
+          <a class="card-link" href="games/math-blaster/index.html">
+            <div class="card-thumb math">🚀</div>
+            <div class="card-body" data-game-id="math-blaster">
+              <h3>Math Blaster</h3>
+              <p>Answer addition &amp; subtraction before time runs out!</p>
+              <div class="card-meta">
+                <div class="card-tags">
+                  <span class="tag tag-math">Math</span>
+                  <span class="tag tag-medium">Medium</span>
+                </div>
+                <span class="hub-stars"></span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- Science Sort -->
+        <article class="card" data-subject="science" data-level="easy">
+          <a class="card-link" href="games/science-sort/index.html">
+            <div class="card-thumb science">♻️</div>
+            <div class="card-body" data-game-id="science-sort">
+              <h3>Recycle Sort</h3>
+              <p>Drag items into the right recycling bins.</p>
+              <div class="card-meta">
+                <div class="card-tags">
+                  <span class="tag tag-science">Science</span>
+                  <span class="tag tag-easy">Easy</span>
+                </div>
+                <span class="hub-stars"></span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- Shape Sort -->
+        <article class="card" data-subject="math" data-level="easy">
+          <a class="card-link" href="games/shape-sort/index.html">
+            <div class="card-thumb math">🔷</div>
+            <div class="card-body" data-game-id="shape-sort">
+              <h3>Shape Sort</h3>
+              <p>Tap shapes and drop them in the matching buckets.</p>
+              <div class="card-meta">
+                <div class="card-tags">
+                  <span class="tag tag-math">Math</span>
+                  <span class="tag tag-easy">Easy</span>
+                </div>
+                <span class="hub-stars"></span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- Memory Match -->
+        <article class="card" data-subject="logic" data-level="easy">
+          <a class="card-link" href="games/memory-match/index.html">
+            <div class="card-thumb logic">🧠</div>
+            <div class="card-body" data-game-id="memory-match">
+              <h3>Emoji Memory</h3>
+              <p>Find all the matching emoji pairs.</p>
+              <div class="card-meta">
+                <div class="card-tags">
+                  <span class="tag tag-logic">Logic</span>
+                  <span class="tag tag-easy">Easy</span>
+                </div>
+                <span class="hub-stars"></span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- Plant Parts -->
+        <article class="card" data-subject="science" data-level="easy">
+          <a class="card-link" href="games/plant-parts/index.html">
+            <div class="card-thumb science">🌱</div>
+            <div class="card-body" data-game-id="plant-parts">
+              <h3>Plant Parts</h3>
+              <p>Label the parts of a plant by dragging words.</p>
+              <div class="card-meta">
+                <div class="card-tags">
+                  <span class="tag tag-science">Science</span>
+                  <span class="tag tag-easy">Easy</span>
+                </div>
+                <span class="hub-stars"></span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- Spelling Scramble -->
+        <article class="card" data-subject="reading" data-level="medium">
+          <a class="card-link" href="games/spelling-scramble/index.html">
+            <div class="card-thumb reading">✏️</div>
+            <div class="card-body" data-game-id="spelling-scramble">
+              <h3>Spelling Scramble</h3>
+              <p>Unscramble the letters to spell the word.</p>
+              <div class="card-meta">
+                <div class="card-tags">
+                  <span class="tag tag-reading">Reading</span>
+                  <span class="tag tag-medium">Medium</span>
+                </div>
+                <span class="hub-stars"></span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- Simple Maze -->
+        <article class="card" data-subject="logic" data-level="medium">
+          <a class="card-link" href="games/simple-maze/index.html">
+            <div class="card-thumb logic">🌀</div>
+            <div class="card-body" data-game-id="simple-maze">
+              <h3>Simple Maze</h3>
+              <p>Guide the star to the finish using arrow keys or taps.</p>
+              <div class="card-meta">
+                <div class="card-tags">
+                  <span class="tag tag-logic">Logic</span>
+                  <span class="tag tag-medium">Medium</span>
+                </div>
+                <span class="hub-stars"></span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <p class="no-results" id="no-results">
+          No games match your filters. Try "All" for both!
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p>Made for curious kids · Progress saved locally on this device</p>
+    </footer>
+
+    <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">
+      🔊
+    </button>
+    <script src="assets/common.js"></script>
+  </body>
+</html>

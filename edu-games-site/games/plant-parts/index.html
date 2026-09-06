@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plant Parts</title>
+  <link rel="stylesheet" href="../../assets/style.css">
+  <link rel="stylesheet" href="game.css">
+</head>
+<body class="game-page">
+  <div class="game-header">
+    <a href="../../index.html" class="btn btn-back btn-sm">← Back to Games</a>
+    <h1>🌱 Plant Parts</h1>
+    <p class="subtitle">Drag each label to the correct part of the plant!</p>
+  </div>
+
+  <div class="game-container">
+    <div class="game-panel">
+      <div class="game-stats">
+        <span class="stat-pill">Labeled: <span id="labeled">0</span>/5</span>
+      </div>
+      <div class="plant-scene">
+        <div class="plant-drawing">
+          <div class="plant-flower" title="Flower">🌸</div>
+          <div class="plant-leaf left" title="Leaf">🍃</div>
+          <div class="plant-leaf right" title="Leaf">🍃</div>
+          <div class="plant-stem"></div>
+          <div class="plant-roots">🌿</div>
+        </div>
+        <div class="drop-zones">
+          <div class="drop-zone" data-part="flower" style="top:5%;left:50%;">?</div>
+          <div class="drop-zone" data-part="leaf" style="top:30%;left:15%;">?</div>
+          <div class="drop-zone" data-part="stem" style="top:45%;left:50%;">?</div>
+          <div class="drop-zone" data-part="root" style="top:75%;left:50%;">?</div>
+          <div class="drop-zone" data-part="seed" style="top:88%;left:75%;">?</div>
+        </div>
+      </div>
+      <div class="labels-tray" id="labels-tray"></div>
+    </div>
+  </div>
+
+  <div class="overlay visible" id="start-overlay">
+    <div class="overlay-box">
+      <div class="overlay-emoji">🌱</div>
+      <h2>Plant Parts</h2>
+      <p>Drag the words — Flower, Leaf, Stem, Root, Seed — to the right spots!</p>
+      <button class="btn btn-primary" id="btn-start">Start Game</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="win-overlay">
+    <div class="overlay-box">
+      <div class="overlay-emoji">🌻</div>
+      <h2>Botanist!</h2>
+      <p id="win-message">You labeled the whole plant!</p>
+      <div id="win-stars" class="stars" style="font-size:2rem;margin-bottom:1rem;"></div>
+      <div class="game-actions">
+        <button class="btn btn-primary" id="btn-play-again">Play Again</button>
+        <a href="../../index.html" class="btn btn-outline">Back to Hub</a>
+      </div>
+    </div>
+  </div>
+
+  <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">🔊</button>
+  <script src="../../assets/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

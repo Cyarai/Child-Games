@@ -1,0 +1,117 @@
+.hint {
+  text-align: center;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.shapes-tray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  min-height: 90px;
+  padding: 1rem;
+  background: var(--color-bg-alt);
+  border-radius: var(--radius-md);
+  margin-bottom: 1.25rem;
+}
+
+.shape-item {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 3px solid transparent;
+  border-radius: var(--radius-sm);
+  transition: transform var(--transition), border-color var(--transition), background var(--transition);
+}
+
+.shape-item.selected {
+  border-color: var(--color-primary);
+  background: rgba(79, 140, 255, 0.15);
+  transform: scale(1.1);
+}
+
+.shape-item.wrong {
+  animation: shake 0.4s ease;
+}
+
+.shape-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #ff6b6b;
+}
+
+.shape-square {
+  width: 44px;
+  height: 44px;
+  background: #4f8cff;
+  border-radius: 4px;
+}
+
+.shape-triangle {
+  width: 0;
+  height: 0;
+  border-left: 26px solid transparent;
+  border-right: 26px solid transparent;
+  border-bottom: 48px solid #6bcb77;
+}
+
+.buckets-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.bucket {
+  border: 3px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  min-height: 110px;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.bucket:hover,
+.bucket.highlight {
+  background: rgba(79, 140, 255, 0.08);
+  border-color: var(--color-primary);
+}
+
+.bucket-label {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.bucket-shapes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.bucket-shapes .shape-item {
+  width: 36px;
+  height: 36px;
+  cursor: default;
+  pointer-events: none;
+}
+
+.bucket-shapes .shape-circle { width: 28px; height: 28px; }
+.bucket-shapes .shape-square { width: 26px; height: 26px; }
+.bucket-shapes .shape-triangle {
+  border-left-width: 15px;
+  border-right-width: 15px;
+  border-bottom-width: 28px;
+}
+
+@media (max-width: 480px) {
+  .buckets-row { grid-template-columns: 1fr; }
+}

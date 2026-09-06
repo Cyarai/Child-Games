@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recycle Sort</title>
+  <link rel="stylesheet" href="../../assets/style.css">
+  <link rel="stylesheet" href="game.css">
+</head>
+<body class="game-page">
+  <div class="game-header">
+    <a href="../../index.html" class="btn btn-back btn-sm">← Back to Games</a>
+    <h1>♻️ Recycle Sort</h1>
+    <p class="subtitle">Drag each item into the correct bin!</p>
+  </div>
+
+  <div class="game-container">
+    <div class="game-panel">
+      <div class="game-stats">
+        <span class="stat-pill">Sorted: <span id="sorted">0</span>/<span id="total">8</span></span>
+        <span class="stat-pill">Mistakes: <span id="mistakes">0</span></span>
+      </div>
+      <div class="items-tray" id="items-tray"></div>
+      <div class="bins-row" id="bins-row"></div>
+    </div>
+  </div>
+
+  <div class="overlay visible" id="start-overlay">
+    <div class="overlay-box">
+      <div class="overlay-emoji">♻️</div>
+      <h2>Recycle Sort</h2>
+      <p>Drag items to the right bin: Plastic, Paper, or Glass!</p>
+      <button class="btn btn-primary" id="btn-start">Start Game</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="win-overlay">
+    <div class="overlay-box">
+      <div class="overlay-emoji">🌍</div>
+      <h2>Planet Saved!</h2>
+      <p id="win-message">You sorted everything correctly!</p>
+      <div id="win-stars" class="stars" style="font-size:2rem;margin-bottom:1rem;"></div>
+      <div class="game-actions">
+        <button class="btn btn-primary" id="btn-play-again">Play Again</button>
+        <a href="../../index.html" class="btn btn-outline">Back to Hub</a>
+      </div>
+    </div>
+  </div>
+
+  <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">🔊</button>
+  <script src="../../assets/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

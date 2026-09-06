@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Maze</title>
+  <link rel="stylesheet" href="../../assets/style.css">
+  <link rel="stylesheet" href="game.css">
+</head>
+<body class="game-page">
+  <div class="game-header">
+    <a href="../../index.html" class="btn btn-back btn-sm">← Back to Games</a>
+    <h1>🌀 Simple Maze</h1>
+    <p class="subtitle">Guide the star ⭐ to the finish 🏁!</p>
+  </div>
+
+  <div class="game-container">
+    <div class="game-panel">
+      <div class="game-stats">
+        <span class="stat-pill">Moves: <span id="moves">0</span></span>
+        <span class="stat-pill">Time: <span id="timer">0</span>s</span>
+      </div>
+      <canvas id="maze" width="300" height="300" aria-label="Maze game board"></canvas>
+      <div class="dpad" id="dpad">
+        <button class="dpad-btn" data-dir="up" aria-label="Move up">▲</button>
+        <div class="dpad-middle">
+          <button class="dpad-btn" data-dir="left" aria-label="Move left">◀</button>
+          <button class="dpad-btn" data-dir="down" aria-label="Move down">▼</button>
+          <button class="dpad-btn" data-dir="right" aria-label="Move right">▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay visible" id="start-overlay">
+    <div class="overlay-box">
+      <div class="overlay-emoji">🌀</div>
+      <h2>Simple Maze</h2>
+      <p>Use arrow keys or the on-screen buttons to reach the finish!</p>
+      <button class="btn btn-primary" id="btn-start">Start Game</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="win-overlay">
+    <div class="overlay-box">
+      <div class="overlay-emoji">🏁</div>
+      <h2>You Escaped!</h2>
+      <p id="win-message"></p>
+      <div id="win-stars" class="stars" style="font-size:2rem;margin-bottom:1rem;"></div>
+      <div class="game-actions">
+        <button class="btn btn-primary" id="btn-play-again">Play Again</button>
+        <a href="../../index.html" class="btn btn-outline">Back to Hub</a>
+      </div>
+    </div>
+  </div>
+
+  <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">🔊</button>
+  <script src="../../assets/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

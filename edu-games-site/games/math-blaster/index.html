@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Blaster</title>
+  <link rel="stylesheet" href="../../assets/style.css">
+  <link rel="stylesheet" href="game.css">
+</head>
+<body class="game-page">
+  <div class="game-header">
+    <a href="../../index.html" class="btn btn-back btn-sm">← Back to Games</a>
+    <h1>🚀 Math Blaster</h1>
+    <p class="subtitle">Answer fast before time runs out!</p>
+  </div>
+
+  <div class="game-container">
+    <div class="game-panel">
+      <div class="game-stats">
+        <span class="stat-pill">Score: <span id="score">0</span></span>
+        <span class="stat-pill">Streak: <span id="streak">0</span></span>
+        <span class="stat-pill">Time: <span id="timer">60</span>s</span>
+      </div>
+      <div class="question-area">
+        <p class="question-label">Solve this:</p>
+        <p class="question" id="question">? + ? = ?</p>
+      </div>
+      <div class="answers" id="answers"></div>
+    </div>
+  </div>
+
+  <div class="overlay visible" id="start-overlay">
+    <div class="overlay-box">
+      <div class="overlay-emoji">🚀</div>
+      <h2>Math Blaster</h2>
+      <p>You have 60 seconds. Tap the correct answer as fast as you can!</p>
+      <button class="btn btn-primary" id="btn-start">Start Game</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="end-overlay">
+    <div class="overlay-box">
+      <div class="overlay-emoji" id="end-emoji">🎉</div>
+      <h2 id="end-title">Time's Up!</h2>
+      <p id="end-message">Great job!</p>
+      <div id="end-stars" class="stars" style="font-size:2rem;margin-bottom:1rem;"></div>
+      <div class="game-actions">
+        <button class="btn btn-primary" id="btn-play-again">Play Again</button>
+        <a href="../../index.html" class="btn btn-outline">Back to Hub</a>
+      </div>
+    </div>
+  </div>
+
+  <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">🔊</button>
+  <script src="../../assets/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
