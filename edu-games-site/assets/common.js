@@ -1,12 +1,159 @@
 /**
  * Educational Games — Shared Helpers
- * Progress tracking (localStorage), hub filters, sound toggle
+ * Kid login (saved stars), guest play (no saved scores), hub filters, sound
  */
 
-const PROGRESS_PREFIX = 'edu-games:progress:';
+const USERS_KEY = 'edu-games:users';
+const SESSION_KEY = 'edu-games:session';
 const SOUND_KEY = 'edu-games:soundEnabled';
+const AVATARS = ['🐻', '🦊', '🐼', '🦄', '🐸', '🐥', '🐙', '🌈', '🐱', '🐰'];
+
+/* ---- Session ---- */
+
+function getSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function setSession(session) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+}
+
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY);
+}
+
+function isGuest() {
+  const session = getSession();
+  return !session || session.mode === 'guest';
+}
+
+function isLoggedIn() {
+  const session = getSession();
+  return Boolean(session && session.mode === 'user' && session.username);
+}
+
+function currentPlayer() {
+  const session = getSession();
+  if (!session) return null;
+  if (session.mode === 'guest') {
+    return { mode: 'guest', username: 'Guest', avatar: '🎈' };
+  }
+  const user = getUsers()[normalizeName(session.username)];
+  return {
+    mode: 'user',
+    username: user?.username || session.username,
+    avatar: user?.avatar || '⭐',
+  };
+}
+
+/* ---- Users (stored only on this device) ---- */
+
+function normalizeName(name) {
+  return String(name || '').trim().toLowerCase();
+}
+
+function getUsers() {
+  try {
+    return JSON.parse(localStorage.getItem(USERS_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function saveUsers(users) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+
+async function hashPin(pin, salt) {
+  const text = salt + ':' + pin;
+  if (window.crypto && window.crypto.subtle) {
+    const data = new TextEncoder().encode(text);
+    const buf = await window.crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = ((hash << 5) - hash) + text.charCodeAt(i);
+    hash |= 0;
+  }
+  return 'x' + Math.abs(hash).toString(16);
+}
+
+function randomSalt() {
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
+
+async function registerPlayer(username, pin, avatar) {
+  const name = String(username || '').trim();
+  if (name.length < 2 || name.length > 16) {
+    return { ok: false, error: 'Pick a nickname 2–16 letters long.' };
+  }
+  if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
+    return { ok: false, error: 'Use letters and numbers only, please!' };
+  }
+  if (!/^\d{4}$/.test(pin)) {
+    return { ok: false, error: 'Your secret code must be 4 numbers.' };
+  }
+
+  const users = getUsers();
+  const key = normalizeName(name);
+  if (users[key]) {
+    return { ok: false, error: 'That nickname is already taken on this device.' };
+  }
+
+  const salt = randomSalt();
+  users[key] = {
+    username: name,
+    avatar: AVATARS.includes(avatar) ? avatar : AVATARS[0],
+    salt,
+    pinHash: await hashPin(pin, salt),
+    createdAt: Date.now(),
+  };
+  saveUsers(users);
+  setSession({ mode: 'user', username: name });
+  return { ok: true };
+}
+
+async function loginPlayer(username, pin) {
+  const users = getUsers();
+  const user = users[normalizeName(username)];
+  if (!user) {
+    return { ok: false, error: 'We could not find that nickname.' };
+  }
+  if (!/^\d{4}$/.test(pin)) {
+    return { ok: false, error: 'Your secret code must be 4 numbers.' };
+  }
+  const hash = await hashPin(pin, user.salt);
+  if (hash !== user.pinHash) {
+    return { ok: false, error: 'Oops! That secret code does not match.' };
+  }
+  setSession({ mode: 'user', username: user.username });
+  return { ok: true };
+}
+
+function enterAsGuest() {
+  setSession({ mode: 'guest' });
+}
+
+function logoutPlayer() {
+  clearSession();
+  window.location.href = window.location.pathname.includes('/games/')
+    ? '../../index.html'
+    : 'index.html';
+}
 
 /* ---- Progress Tracking ---- */
+
+function progressKey(gameId) {
+  const session = getSession();
+  if (!session || session.mode !== 'user') return null;
+  return 'edu-games:progress:' + normalizeName(session.username) + ':' + gameId;
+}
 
 function saveProgress(gameId, data) {
   const existing = getProgress(gameId);
@@ -19,8 +166,11 @@ function saveProgress(gameId, data) {
     merged.stars = Math.max(existing.stars || 0, data.stars);
   }
 
+  const key = progressKey(gameId);
+  if (!key) return merged;
+
   try {
-    localStorage.setItem(PROGRESS_PREFIX + gameId, JSON.stringify(merged));
+    localStorage.setItem(key, JSON.stringify(merged));
   } catch (e) {
     console.warn('Could not save progress:', e);
   }
@@ -28,8 +178,10 @@ function saveProgress(gameId, data) {
 }
 
 function getProgress(gameId) {
+  const key = progressKey(gameId);
+  if (!key) return { stars: 0, bestScore: 0 };
   try {
-    const raw = localStorage.getItem(PROGRESS_PREFIX + gameId);
+    const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : { stars: 0, bestScore: 0 };
   } catch {
     return { stars: 0, bestScore: 0 };
@@ -57,6 +209,13 @@ function calcStars(score, thresholds) {
 function initHubFilters() {
   const cards = document.querySelectorAll('.games-grid .card');
   const noResults = document.getElementById('no-results');
+  if (!cards.length) return;
+
+  if (document.body.dataset.filtersReady === 'true') {
+    renderHubProgress();
+    return;
+  }
+  document.body.dataset.filtersReady = 'true';
   let activeSubject = 'all';
   let activeLevel = 'all';
 
@@ -98,13 +257,155 @@ function renderHubProgress() {
     const gameId = el.dataset.gameId;
     const progress = getProgress(gameId);
     const starsEl = el.querySelector('.hub-stars');
-    if (starsEl) {
-      starsEl.innerHTML = starsHtml(progress.stars || 0);
-    }
+    if (starsEl) starsEl.innerHTML = starsHtml(progress.stars || 0);
     const scoreEl = el.querySelector('.hub-best-score');
-    if (scoreEl && progress.bestScore) {
-      scoreEl.textContent = 'Best: ' + progress.bestScore;
+    if (scoreEl) {
+      scoreEl.textContent = progress.bestScore ? 'Best: ' + progress.bestScore : '';
     }
+  });
+}
+
+/* ---- Auth UI ---- */
+
+function showAuthPanel(id) {
+  document.querySelectorAll('.auth-panel').forEach(p => p.classList.add('hidden'));
+  document.getElementById(id)?.classList.remove('hidden');
+}
+
+function setAuthError(id, message) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = message || '';
+}
+
+function openPlayground() {
+  document.getElementById('auth-gate')?.classList.add('hidden');
+  document.getElementById('app-shell')?.classList.remove('hidden');
+  renderPlayerBars();
+  if (document.querySelector('.games-grid')) initHubFilters();
+}
+
+function initAuthGate() {
+  const gate = document.getElementById('auth-gate');
+  if (!gate) {
+    if (!getSession() && window.location.pathname.includes('/games/')) {
+      window.location.href = '../../index.html';
+    }
+    renderPlayerBars();
+    return;
+  }
+
+  const session = getSession();
+  if (session) {
+    openPlayground();
+  } else {
+    gate.classList.remove('hidden');
+    document.getElementById('app-shell')?.classList.add('hidden');
+    showAuthPanel('auth-home');
+  }
+
+  const avatarRow = document.getElementById('avatar-picker');
+  if (avatarRow && !avatarRow.dataset.ready) {
+    avatarRow.dataset.ready = 'true';
+    AVATARS.forEach((emoji, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'avatar-choice' + (i === 0 ? ' selected' : '');
+      btn.textContent = emoji;
+      btn.setAttribute('aria-label', 'Choose avatar ' + emoji);
+      btn.addEventListener('click', () => {
+        avatarRow.querySelectorAll('.avatar-choice').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+      avatarRow.appendChild(btn);
+    });
+  }
+
+  document.querySelectorAll('#login-pin, #register-pin, #register-pin-confirm').forEach(input => {
+    input.addEventListener('input', () => {
+      input.value = input.value.replace(/\D/g, '').slice(0, 4);
+    });
+  });
+
+  document.getElementById('btn-show-login')?.addEventListener('click', () => {
+    setAuthError('login-error', '');
+    showAuthPanel('auth-login');
+  });
+  document.getElementById('btn-show-register')?.addEventListener('click', () => {
+    setAuthError('register-error', '');
+    showAuthPanel('auth-register');
+  });
+  document.getElementById('btn-guest')?.addEventListener('click', () => {
+    enterAsGuest();
+    openPlayground();
+  });
+  document.querySelectorAll('[data-auth-back]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setAuthError('login-error', '');
+      setAuthError('register-error', '');
+      showAuthPanel('auth-home');
+    });
+  });
+
+  document.getElementById('form-login')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('login-username').value;
+    const pin = document.getElementById('login-pin').value;
+    const result = await loginPlayer(username, pin);
+    if (!result.ok) {
+      setAuthError('login-error', result.error);
+      return;
+    }
+    openPlayground();
+  });
+
+  document.getElementById('form-register')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('register-username').value;
+    const pin = document.getElementById('register-pin').value;
+    const pin2 = document.getElementById('register-pin-confirm').value;
+    const avatar = document.querySelector('#avatar-picker .avatar-choice.selected')?.textContent || AVATARS[0];
+    if (pin !== pin2) {
+      setAuthError('register-error', 'Those secret codes do not match yet.');
+      return;
+    }
+    const result = await registerPlayer(username, pin, avatar);
+    if (!result.ok) {
+      setAuthError('register-error', result.error);
+      return;
+    }
+    openPlayground();
+  });
+}
+
+function renderPlayerBars() {
+  const player = currentPlayer();
+  document.querySelectorAll('[data-player-bar]').forEach(bar => {
+    if (!player) {
+      bar.classList.add('hidden');
+      return;
+    }
+    bar.classList.remove('hidden');
+    const avatarEl = bar.querySelector('[data-player-avatar]');
+    const nameEl = bar.querySelector('[data-player-name]');
+    const noteEl = bar.querySelector('[data-player-note]');
+    if (avatarEl) avatarEl.textContent = player.avatar;
+    if (nameEl) nameEl.textContent = player.username;
+    if (noteEl) {
+      noteEl.textContent = player.mode === 'guest'
+        ? 'Guest play · scores reset if you refresh'
+        : 'Stars are saved on this device';
+    }
+  });
+
+  document.querySelectorAll('[data-guest-banner]').forEach(el => {
+    el.classList.toggle('hidden', !isGuest() || !player);
+  });
+}
+
+function initLogoutButtons() {
+  document.querySelectorAll('[data-logout]').forEach(btn => {
+    btn.addEventListener('click', logoutPlayer);
   });
 }
 
@@ -163,9 +464,45 @@ function hideAllOverlays() {
   document.querySelectorAll('.overlay').forEach(o => o.classList.remove('visible'));
 }
 
+function injectGamePlayerChip() {
+  if (!document.body.classList.contains('game-page')) return;
+  if (!getSession()) return;
+  if (document.querySelector('[data-player-bar]')) {
+    renderPlayerBars();
+    return;
+  }
+
+  const player = currentPlayer();
+  if (!player) return;
+
+  const chip = document.createElement('div');
+  chip.className = 'player-chip';
+  chip.setAttribute('data-player-bar', '');
+  chip.innerHTML = `
+    <span class="player-avatar" data-player-avatar>${player.avatar}</span>
+    <span>
+      <strong data-player-name>${player.username}</strong>
+      <small data-player-note></small>
+    </span>`;
+  document.body.appendChild(chip);
+
+  if (isGuest()) {
+    const note = document.createElement('p');
+    note.className = 'guest-banner';
+    note.setAttribute('data-guest-banner', '');
+    note.textContent = '🎈 Guest mode: stars and scores disappear if you refresh.';
+    const header = document.querySelector('.game-header');
+    header?.appendChild(note);
+  }
+
+  renderPlayerBars();
+}
+
 /* ---- Init on DOM ready ---- */
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (document.querySelector('.games-grid')) initHubFilters();
+  initAuthGate();
+  initLogoutButtons();
+  injectGamePlayerChip();
   initSoundToggle();
 });

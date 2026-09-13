@@ -6,10 +6,87 @@
     <title>Fun Learning Games</title>
     <link rel="stylesheet" href="assets/style.css" />
   </head>
-  <body>
+  <body class="hub-page">
+    <div class="sky-deco" aria-hidden="true">
+      <span class="cloud cloud-1">☁️</span>
+      <span class="cloud cloud-2">☁️</span>
+      <span class="cloud cloud-3">☁️</span>
+      <span class="floaty floaty-1">⭐</span>
+      <span class="floaty floaty-2">🎈</span>
+      <span class="floaty floaty-3">🌈</span>
+    </div>
+
+    <section class="auth-gate" id="auth-gate">
+      <div class="auth-card">
+        <div class="auth-mascot" aria-hidden="true">🦁</div>
+        <div class="auth-panel" id="auth-home">
+          <h1>Welcome, explorer!</h1>
+          <p>Make a clubhouse to keep your stars, or play as a guest for fun.</p>
+          <div class="auth-actions">
+            <button class="btn btn-primary btn-lg" id="btn-show-register">✨ Make a Clubhouse</button>
+            <button class="btn btn-secondary btn-lg" id="btn-show-login">🔑 I Have a Clubhouse</button>
+            <button class="btn btn-guest btn-lg" id="btn-guest">🎈 Play as Guest</button>
+          </div>
+          <p class="auth-hint">Guest scores vanish if you refresh. Clubhouses remember your stars on this device.</p>
+        </div>
+
+        <div class="auth-panel hidden" id="auth-login">
+          <h2>Welcome back!</h2>
+          <p>Type your nickname and secret 4-number code.</p>
+          <form id="form-login" class="auth-form">
+            <label>
+              Nickname
+              <input id="login-username" name="username" type="text" maxlength="16" autocomplete="username" required>
+            </label>
+            <label>
+              Secret code
+              <input id="login-pin" name="pin" type="password" inputmode="numeric" maxlength="4" pattern="\d{4}" autocomplete="current-password" required>
+            </label>
+            <p class="auth-error" id="login-error" role="alert"></p>
+            <button class="btn btn-primary btn-lg" type="submit">Let’s Play!</button>
+            <button class="btn btn-outline" type="button" data-auth-back>Back</button>
+          </form>
+        </div>
+
+        <div class="auth-panel hidden" id="auth-register">
+          <h2>Build your clubhouse</h2>
+          <p>Pick a nickname, a buddy, and a 4-number secret code.</p>
+          <form id="form-register" class="auth-form">
+            <label>
+              Nickname
+              <input id="register-username" name="username" type="text" maxlength="16" autocomplete="username" required>
+            </label>
+            <p class="avatar-label">Pick a buddy</p>
+            <div class="avatar-picker" id="avatar-picker"></div>
+            <label>
+              Secret code (4 numbers)
+              <input id="register-pin" name="pin" type="password" inputmode="numeric" maxlength="4" pattern="\d{4}" autocomplete="new-password" required>
+            </label>
+            <label>
+              Type it again
+              <input id="register-pin-confirm" name="pin-confirm" type="password" inputmode="numeric" maxlength="4" pattern="\d{4}" autocomplete="new-password" required>
+            </label>
+            <p class="auth-error" id="register-error" role="alert"></p>
+            <button class="btn btn-primary btn-lg" type="submit">Save My Clubhouse</button>
+            <button class="btn btn-outline" type="button" data-auth-back>Back</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <div id="app-shell" class="hidden">
     <header class="site-header">
+      <div class="player-bar" data-player-bar>
+        <span class="player-avatar" data-player-avatar>⭐</span>
+        <div class="player-info">
+          <strong data-player-name>Player</strong>
+          <small data-player-note></small>
+        </div>
+        <button class="btn btn-outline btn-sm" data-logout type="button">Switch player</button>
+      </div>
       <h1>🎮 Fun Learning Games</h1>
-      <p>Pick a game and start learning! Stars are saved on this device.</p>
+      <p>Pick a colorful game and start learning!</p>
+      <p class="guest-banner hidden" data-guest-banner>🎈 Guest mode: your stars and scores will disappear if you refresh the page.</p>
     </header>
 
     <main class="container">
@@ -78,13 +155,14 @@
                   <span class="tag tag-reading">Reading</span>
                   <span class="tag tag-easy">Easy</span>
                 </div>
-                <span class="hub-stars"></span>
-              </div>
+              <span class="hub-stars"></span>
+              <span class="hub-best-score"></span>
             </div>
-          </a>
-        </article>
+          </div>
+        </a>
+      </article>
 
-        <!-- Math Blaster -->
+      <!-- Math Blaster -->
         <article class="card" data-subject="math" data-level="medium">
           <a class="card-link" href="games/math-blaster/index.html">
             <div class="card-thumb math">🚀</div>
@@ -97,6 +175,7 @@
                   <span class="tag tag-medium">Medium</span>
                 </div>
                 <span class="hub-stars"></span>
+                <span class="hub-best-score"></span>
               </div>
             </div>
           </a>
@@ -115,6 +194,7 @@
                   <span class="tag tag-easy">Easy</span>
                 </div>
                 <span class="hub-stars"></span>
+                <span class="hub-best-score"></span>
               </div>
             </div>
           </a>
@@ -133,6 +213,7 @@
                   <span class="tag tag-easy">Easy</span>
                 </div>
                 <span class="hub-stars"></span>
+                <span class="hub-best-score"></span>
               </div>
             </div>
           </a>
@@ -151,6 +232,7 @@
                   <span class="tag tag-easy">Easy</span>
                 </div>
                 <span class="hub-stars"></span>
+                <span class="hub-best-score"></span>
               </div>
             </div>
           </a>
@@ -169,6 +251,7 @@
                   <span class="tag tag-easy">Easy</span>
                 </div>
                 <span class="hub-stars"></span>
+                <span class="hub-best-score"></span>
               </div>
             </div>
           </a>
@@ -187,6 +270,7 @@
                   <span class="tag tag-medium">Medium</span>
                 </div>
                 <span class="hub-stars"></span>
+                <span class="hub-best-score"></span>
               </div>
             </div>
           </a>
@@ -205,6 +289,7 @@
                   <span class="tag tag-medium">Medium</span>
                 </div>
                 <span class="hub-stars"></span>
+                <span class="hub-best-score"></span>
               </div>
             </div>
           </a>
@@ -217,8 +302,9 @@
     </main>
 
     <footer class="site-footer">
-      <p>Made for curious kids · Progress saved locally on this device</p>
+      <p>Made for curious kids · Clubhouse stars stay on this device</p>
     </footer>
+    </div>
 
     <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">
       🔊
