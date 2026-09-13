@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Bubbles</title>
+  <meta name="description" content="Pop numbered bubbles in order from 1 to 10! A fun math game for kids.">
+  <link rel="stylesheet" href="../../assets/style.css">
+  <link rel="stylesheet" href="game.css">
+</head>
+<body class="game-page">
+  <div class="game-header">
+    <a href="../../index.html" class="btn btn-back btn-sm">← Back to Games</a>
+    <h1>🔵 Number Bubbles</h1>
+    <p class="subtitle">Pop the bubbles in order: 1, 2, 3… all the way to 10!</p>
+  </div>
+
+  <div class="game-container">
+    <div class="game-panel">
+      <div class="game-stats">
+        <span class="stat-pill">⏱️ Time: <span id="timer">30</span>s</span>
+        <span class="stat-pill">Next: <span id="next-num">1</span></span>
+        <span class="stat-pill">Score: <span id="score">0</span></span>
+      </div>
+      <div id="bubble-arena" class="bubble-arena" aria-label="Bubble arena"></div>
+    </div>
+  </div>
+
+  <!-- Start Overlay -->
+  <div class="overlay visible" id="start-overlay">
+    <div class="overlay-box">
+      <div class="overlay-emoji">🔵</div>
+      <h2>Number Bubbles!</h2>
+      <p>Bubbles with numbers float up. Pop them in order <strong>1, 2, 3…</strong> all the way to <strong>10</strong> before the time runs out!</p>
+      <button class="btn btn-primary btn-lg" id="btn-start">Start Popping! 🎉</button>
+    </div>
+  </div>
+
+  <!-- Win Overlay -->
+  <div class="overlay" id="win-overlay">
+    <div class="overlay-box">
+      <div class="overlay-emoji">🎉</div>
+      <h2>You Did It!</h2>
+      <p id="win-message"></p>
+      <div id="win-stars" class="stars" style="font-size:2rem;margin-bottom:1rem;"></div>
+      <div class="game-actions">
+        <button class="btn btn-primary" id="btn-play-again">Play Again</button>
+        <a href="../../index.html" class="btn btn-outline">Back to Hub</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lose Overlay -->
+  <div class="overlay" id="lose-overlay">
+    <div class="overlay-box">
+      <div class="overlay-emoji">⏰</div>
+      <h2>Time's Up!</h2>
+      <p id="lose-message"></p>
+      <div class="game-actions">
+        <button class="btn btn-primary" id="btn-try-again">Try Again!</button>
+        <a href="../../index.html" class="btn btn-outline">Back to Hub</a>
+      </div>
+    </div>
+  </div>
+
+  <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">🔊</button>
+  <button class="music-toggle" id="music-toggle" aria-label="Play music">🎵</button>
+  <script src="../../assets/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -6,6 +6,7 @@
 const USERS_KEY = 'edu-games:users';
 const SESSION_KEY = 'edu-games:session';
 const SOUND_KEY = 'edu-games:soundEnabled';
+const MUSIC_KEY = 'edu-games:musicEnabled';
 const AVATARS = ['🐻', '🦊', '🐼', '🦄', '🐸', '🐥', '🐙', '🌈', '🐱', '🐰'];
 
 /* ---- Session ---- */
@@ -283,6 +284,11 @@ function openPlayground() {
   document.getElementById('app-shell')?.classList.remove('hidden');
   renderPlayerBars();
   if (document.querySelector('.games-grid')) initHubFilters();
+  // Start background music when entering the playground
+  if (soundEnabled && musicEnabled) {
+    // Small delay so AudioContext isn't created before user gesture
+    setTimeout(playBgMusic, 100);
+  }
 }
 
 function initAuthGate() {
@@ -412,6 +418,138 @@ function initLogoutButtons() {
 /* ---- Sound Toggle ---- */
 
 let soundEnabled = localStorage.getItem(SOUND_KEY) !== 'false';
+let musicEnabled = localStorage.getItem(MUSIC_KEY) !== 'false';
+
+/* ---- Background Music Synthesizer ---- */
+
+let _bgMusicCtx = null;
+let _bgMusicNodes = [];
+let _bgMusicRunning = false;
+let _bgMusicStarted = false;
+
+// Cheerful C-major pentatonic melody notes (frequencies in Hz)
+const BG_MELODY = [
+  { freq: 523.25, dur: 0.3 },  // C5
+  { freq: 587.33, dur: 0.3 },  // D5
+  { freq: 659.25, dur: 0.3 },  // E5
+  { freq: 783.99, dur: 0.3 },  // G5
+  { freq: 880.00, dur: 0.3 },  // A5
+  { freq: 783.99, dur: 0.3 },  // G5
+  { freq: 659.25, dur: 0.45 }, // E5
+  { freq: 523.25, dur: 0.3 },  // C5
+  { freq: 392.00, dur: 0.3 },  // G4
+  { freq: 440.00, dur: 0.3 },  // A4
+  { freq: 523.25, dur: 0.45 }, // C5
+  { freq: 659.25, dur: 0.3 },  // E5
+  { freq: 587.33, dur: 0.3 },  // D5
+  { freq: 523.25, dur: 0.6 },  // C5
+];
+
+const BG_BASS = [
+  { freq: 130.81, dur: 0.6 },  // C3
+  { freq: 146.83, dur: 0.6 },  // D3
+  { freq: 164.81, dur: 0.6 },  // E3
+  { freq: 196.00, dur: 0.6 },  // G3
+  { freq: 220.00, dur: 0.6 },  // A3
+  { freq: 196.00, dur: 0.6 },  // G3
+  { freq: 164.81, dur: 0.9 },  // E3
+  { freq: 130.81, dur: 1.2 },  // C3
+];
+
+function _getOrCreateBgCtx() {
+  if (!_bgMusicCtx || _bgMusicCtx.state === 'closed') {
+    _bgMusicCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return _bgMusicCtx;
+}
+
+function _scheduleMelody(ctx, notes, gainVal, startTime, waveType) {
+  let t = startTime;
+  const scheduled = [];
+  notes.forEach(note => {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.type = waveType || 'triangle';
+    osc.frequency.value = note.freq;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(gainVal, t + 0.02);
+    g.gain.setValueAtTime(gainVal, t + note.dur - 0.05);
+    g.gain.linearRampToValueAtTime(0, t + note.dur);
+    osc.start(t);
+    osc.stop(t + note.dur + 0.01);
+    scheduled.push(osc);
+    t += note.dur;
+  });
+  return { nodes: scheduled, duration: t - startTime };
+}
+
+function _loopBgMusic() {
+  if (!_bgMusicRunning) return;
+  try {
+    const ctx = _getOrCreateBgCtx();
+    if (ctx.state === 'suspended') ctx.resume();
+    const now = ctx.currentTime;
+
+    const melodyResult = _scheduleMelody(ctx, BG_MELODY, 0.07, now, 'triangle');
+    // Bass plays at half speed relative to melody total duration
+    const bassResult = _scheduleMelody(ctx, BG_BASS, 0.04, now, 'sine');
+
+    const loopDuration = melodyResult.duration;
+    _bgMusicNodes = [...melodyResult.nodes, ...bassResult.nodes];
+
+    // Schedule next loop
+    setTimeout(() => {
+      if (_bgMusicRunning) _loopBgMusic();
+    }, (loopDuration - 0.1) * 1000);
+  } catch {
+    /* audio not available */
+  }
+}
+
+function playBgMusic() {
+  if (!musicEnabled || _bgMusicRunning) return;
+  try {
+    _bgMusicRunning = true;
+    _bgMusicStarted = true;
+    _loopBgMusic();
+    updateMusicNoteIcon();
+  } catch {
+    _bgMusicRunning = false;
+  }
+}
+
+function stopBgMusic() {
+  _bgMusicRunning = false;
+  _bgMusicNodes.forEach(n => { try { n.stop(); } catch {} });
+  _bgMusicNodes = [];
+  updateMusicNoteIcon();
+}
+
+function updateMusicNoteIcon() {
+  const btn = document.getElementById('music-toggle');
+  if (!btn) return;
+  btn.textContent = (_bgMusicRunning && musicEnabled) ? '🎵' : '🎶';
+  btn.classList.toggle('music-playing', _bgMusicRunning && musicEnabled);
+  btn.setAttribute('aria-label', (_bgMusicRunning && musicEnabled) ? 'Pause music' : 'Play music');
+}
+
+function initMusicToggle() {
+  const btn = document.getElementById('music-toggle');
+  if (!btn) return;
+  updateMusicNoteIcon();
+  btn.addEventListener('click', () => {
+    musicEnabled = !musicEnabled;
+    localStorage.setItem(MUSIC_KEY, musicEnabled);
+    if (musicEnabled) {
+      playBgMusic();
+    } else {
+      stopBgMusic();
+    }
+    updateMusicNoteIcon();
+  });
+}
 
 function initSoundToggle() {
   const btn = document.getElementById('sound-toggle');
@@ -421,6 +559,11 @@ function initSoundToggle() {
     soundEnabled = !soundEnabled;
     localStorage.setItem(SOUND_KEY, soundEnabled);
     updateSoundButton(btn);
+    if (!soundEnabled && _bgMusicRunning) {
+      stopBgMusic();
+    } else if (soundEnabled && musicEnabled && !_bgMusicRunning) {
+      playBgMusic();
+    }
   });
 }
 
@@ -438,13 +581,37 @@ function playSound(type) {
     osc.connect(gain);
     gain.connect(ctx.destination);
 
-    const freqs = { flip: 440, match: 660, win: 880, lose: 220, click: 520 };
-    osc.frequency.value = freqs[type] || 440;
-    osc.type = 'sine';
+    const configs = {
+      flip:  { freq: 440,  dur: 0.18, type: 'sine' },
+      match: { freq: 660,  dur: 0.25, type: 'triangle' },
+      win:   { freq: 880,  dur: 0.35, type: 'triangle' },
+      lose:  { freq: 220,  dur: 0.3,  type: 'sawtooth' },
+      click: { freq: 520,  dur: 0.15, type: 'sine' },
+      pop:   { freq: 700,  dur: 0.12, type: 'sine' },
+      right: { freq: 784,  dur: 0.3,  type: 'triangle' },
+      wrong: { freq: 196,  dur: 0.3,  type: 'sawtooth' },
+    };
+    const cfg = configs[type] || configs.click;
+    osc.frequency.value = cfg.freq;
+    osc.type = cfg.type;
     gain.gain.setValueAtTime(0.15, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + cfg.dur);
     osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.2);
+    osc.stop(ctx.currentTime + cfg.dur + 0.01);
+
+    // Win: play a short ascending arpeggio
+    if (type === 'win') {
+      [523, 659, 784, 1047].forEach((f, i) => {
+        const o2 = ctx.createOscillator();
+        const g2 = ctx.createGain();
+        o2.connect(g2); g2.connect(ctx.destination);
+        o2.type = 'triangle'; o2.frequency.value = f;
+        const t = ctx.currentTime + i * 0.12;
+        g2.gain.setValueAtTime(0.12, t);
+        g2.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+        o2.start(t); o2.stop(t + 0.26);
+      });
+    }
   } catch {
     /* audio not available */
   }
@@ -505,4 +672,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initLogoutButtons();
   injectGamePlayerChip();
   initSoundToggle();
+  initMusicToggle();
 });

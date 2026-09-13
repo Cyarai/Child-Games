@@ -583,6 +583,42 @@ h3 { font-size: clamp(1.1rem, 2.5vw, 1.35rem); }
   transform: scale(0.92);
 }
 
+/* ---- Music Toggle ---- */
+
+.music-toggle {
+  position: fixed;
+  bottom: 4.5rem;
+  right: 1rem;
+  z-index: 50;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffd166, #ff6b81);
+  border: 3px solid #fff;
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(255, 107, 129, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.music-toggle:active {
+  transform: scale(0.92);
+}
+
+.music-toggle.music-playing {
+  animation: musicPulse 1.4s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(255, 107, 129, 0.6);
+}
+
+@keyframes musicPulse {
+  0%   { box-shadow: 0 0 0 0   rgba(255, 107, 129, 0.6); }
+  60%  { box-shadow: 0 0 0 10px rgba(255, 107, 129, 0); }
+  100% { box-shadow: 0 0 0 0   rgba(255, 107, 129, 0); }
+}
+
 /* ---- Decorative sky ---- */
 
 .sky-deco {
@@ -605,6 +641,9 @@ h3 { font-size: clamp(1.1rem, 2.5vw, 1.35rem); }
 .floaty-1 { top: 28%; left: 18%; }
 .floaty-2 { top: 12%; right: 22%; animation-delay: 0.8s; }
 .floaty-3 { bottom: 18%; right: 10%; animation-delay: 1.6s; }
+.floaty-4 { top: 55%; left: 5%;  animation-delay: 0.4s; font-size: 1.8rem; }
+.floaty-5 { bottom: 30%; right: 5%; animation-delay: 2.4s; font-size: 1.8rem; }
+.floaty-6 { top: 70%; left: 55%; animation-delay: 1.0s; font-size: 1.6rem; }
 
 @keyframes floaty {
   0%, 100% { transform: translateY(0); }

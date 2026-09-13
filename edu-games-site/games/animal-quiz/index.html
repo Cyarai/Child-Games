@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animal Quiz</title>
+  <meta name="description" content="Tap the correct animal from the clue! A fun science quiz game for kids.">
+  <link rel="stylesheet" href="../../assets/style.css">
+  <link rel="stylesheet" href="game.css">
+</head>
+<body class="game-page">
+  <div class="game-header">
+    <a href="../../index.html" class="btn btn-back btn-sm">← Back to Games</a>
+    <h1>🦁 Animal Quiz</h1>
+    <p class="subtitle">Read the clue and tap the right animal!</p>
+  </div>
+
+  <div class="game-container">
+    <div class="game-panel">
+      <div class="game-stats">
+        <span class="stat-pill">Score: <span id="score">0</span></span>
+        <span class="stat-pill">Question: <span id="q-num">1</span>/10</span>
+        <span class="stat-pill" id="streak-pill">🔥 Streak: <span id="streak">0</span></span>
+      </div>
+
+      <div class="quiz-clue-box" id="clue-box">
+        <div class="clue-icon" id="clue-icon">🌿</div>
+        <p class="clue-text" id="clue-text">Loading…</p>
+      </div>
+
+      <div class="quiz-choices" id="choices"></div>
+
+      <div class="feedback-msg" id="feedback" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <!-- Start Overlay -->
+  <div class="overlay visible" id="start-overlay">
+    <div class="overlay-box">
+      <div class="overlay-emoji">🦁</div>
+      <h2>Animal Quiz!</h2>
+      <p>Read each clue and tap the correct animal. Answer 10 questions to win!</p>
+      <button class="btn btn-primary btn-lg" id="btn-start">Let's Go! 🚀</button>
+    </div>
+  </div>
+
+  <!-- Win Overlay -->
+  <div class="overlay" id="win-overlay">
+    <div class="overlay-box">
+      <div class="overlay-emoji" id="win-emoji">🏆</div>
+      <h2 id="win-title">Amazing!</h2>
+      <p id="win-message"></p>
+      <div id="win-stars" class="stars" style="font-size:2rem;margin-bottom:1rem;"></div>
+      <div class="game-actions">
+        <button class="btn btn-primary" id="btn-play-again">Play Again</button>
+        <a href="../../index.html" class="btn btn-outline">Back to Hub</a>
+      </div>
+    </div>
+  </div>
+
+  <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">🔊</button>
+  <button class="music-toggle" id="music-toggle" aria-label="Play music">🎵</button>
+  <script src="../../assets/common.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
